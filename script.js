@@ -15,5 +15,6 @@ addEventListener('DOMContentLoaded', (e) => {
     r.disabled = true
   })
   const c = d.getElementById('openChrome')
-  c.href = `intent://${window.location.host}#Intent;scheme=http;package=com.android.chrome;end`
+  const protocol = window.location.protocol.replace(':', '')
+  c.href = `intent://${window.location.host}#Intent;scheme=${protocol};package=com.android.chrome;end`
 })
