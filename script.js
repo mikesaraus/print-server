@@ -14,4 +14,6 @@ addEventListener('DOMContentLoaded', (e) => {
   f.form.addEventListener('reset', function () {
     r.disabled = true
   })
+  const c = d.getElementById('openChrome')
+  c.href = `intent://${window.location.host}#Intent;scheme=http;package=com.android.chrome;end`
 })

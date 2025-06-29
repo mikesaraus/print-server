@@ -50,7 +50,7 @@ html_template = r'''
                     <img src="/print.svg" width="50"/>
                     <small>
                         You can upload multiple files at once, as long as they're all the same paper size. If you can't select files please try to
-                        <a href="intent://com.android.chrome/#Intent;scheme=android-app;end">Open in Chrome</a>.
+                        <a id="openChrome" href="intent://com.android.chrome/#Intent;scheme=android-app;end">Open in Chrome</a>.
                     </small>
                 </center>
             </div>
