@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Print File Uploader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/print.svg" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <main>
+      <div class="title">
+        <h1>Print File Upload</h1>
+      </div>
+      <div class="subtitle">
+        <center>
+          <img src="/print.svg" width="50" />
+          <small>
+            You can upload multiple files at once, as long as they're all the same paper size. If you can't select files
+            please try to
+            <a id="openChrome" href="intent://com.android.chrome/#Intent;scheme=android-app;end">Open in Chrome</a>.
+          </small>
+        </center>
+      </div>
+      <form id="form-upload" method="post" enctype="multipart/form-data">
+        <fieldset class="file-picker-wrapper">
+          <input
+            id="file-picker"
+            type="file"
+            name="file"
+            multiple
+            required
+            accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.svg,.ppt,.pptx,.txt,.xls,.xlsx,.doc,.docx,.pages,.numbers"
+          />
+        </fieldset>
+        <div id="size-selection">
+          <fieldset>
+            <input name="paper-size" type="radio" value="LongBond" id="long" />
+            <label for="long">Long Bond Paper</label>
+          </fieldset>
+          <fieldset>
+            <input name="paper-size" type="radio" value="Letter" id="short" />
+            <label for="short">Short/Letter Paper</label>
+          </fieldset>
+          <fieldset>
+            <input name="paper-size" type="radio" value="A4" id="a4" checked="checked" />
+            <label for="a4">A4 Paper</label>
+          </fieldset>
+          <fieldset>
+            <input name="paper-size" type="radio" value="PhotoPaper" id="photo" />
+            <label for="photo">✧ Photo Paper</label>
+          </fieldset>
+        </div>
+        <div class="uplad-wrapper">
+          <input id="file-reset" type="reset" value="Reset" />
+          <input id="file-upload" type="submit" value="Upload" />
+        </div>
+      </form>
+      $upload_result_html
+      <section class="files">
+        <h3><img src="/print.svg" height="24" /> Uploaded Files</h3>
+        <ul id="directory-list">
+          $file_list_html
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <small>REMMS @2025</small>
+    </footer>
+    <script type="text/javascript" src="/script.js"></script>
+  </body>
+</html>
