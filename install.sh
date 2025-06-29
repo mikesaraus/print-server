@@ -31,6 +31,7 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=$DIR
 ExecStart=$PYTHON_PATH $SCRIPT_PATH
 Restart=always
 RestartSec=5
