@@ -45,12 +45,16 @@ a:hover {
 }
 .file-entry {
   color: #6610f2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-wrap: anywhere;
   span {
     display: flex;
   }
   svg {
     margin-top: 3px;
     margin-right: 6px;
+    min-width: 16px;
   }
 }
 .title {
