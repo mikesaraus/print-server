@@ -1,32 +1,71 @@
-#!/bin/bash
+#!/bin/sh
 
 # uninstall.sh
-# This script removes the main.py systemd service and its related cron job.
+# Removes main.py service and its deletion jobs
+# Compatible with systemd and procd systems
 
 SERVICE_NAME="print-server"
-SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 
-# Get the directory of this uninstall.sh
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get directory of this uninstall.sh
+DIR="$(cd "$(dirname "$0")" && pwd)"
 UPLOADS_PATH="$DIR/uploads"
 
-echo "Stopping and disabling systemd service..."
+# Detect init system
+if pidof systemd >/dev/null 2>&1; then
+    INIT_SYSTEM="systemd"
+elif [ -d /etc/init.d ] && grep -q procd /sbin/init 2>/dev/null; then
+    INIT_SYSTEM="procd"
+else
+    INIT_SYSTEM="unknown"
+fi
 
-sudo systemctl stop "$SERVICE_NAME"
-sudo systemctl disable "$SERVICE_NAME"
+echo "Detected init system: $INIT_SYSTEM"
 
-echo "Removing systemd service file..."
-sudo rm -f "$SERVICE_FILE"
+if [ "$INIT_SYSTEM" = "systemd" ]; then
+    SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 
-echo "Reloading systemd daemon..."
-sudo systemctl daemon-reload
+    echo "Stopping and disabling systemd service..."
+    systemctl stop "$SERVICE_NAME"
+    systemctl disable "$SERVICE_NAME"
 
-echo "Removing cron job for deleting uploads contents..."
+    echo "Removing systemd service file..."
+    rm -f "$SERVICE_FILE"
 
-# Prepare grep-safe path
-SAFE_UPLOADS_PATH=$(echo "$UPLOADS_PATH" | sed 's/\//\\\//g')
+    echo "Reloading systemd daemon..."
+    systemctl daemon-reload
 
-# Remove lines containing uploads path from crontab
-( crontab -l 2>/dev/null | grep -v "$SAFE_UPLOADS_PATH" ) | crontab -
+elif [ "$INIT_SYSTEM" = "procd" ]; then
+    SERVICE_FILE="/etc/init.d/${SERVICE_NAME}"
+
+    echo "Stopping and disabling procd service..."
+    /etc/init.d/$SERVICE_NAME stop
+    /etc/init.d/$SERVICE_NAME disable
+
+    echo "Removing procd service file..."
+    rm -f "$SERVICE_FILE"
+
+else
+    echo "Unknown init system. Please remove service manually if it exists."
+fi
+
+# Remove cron job for deleting uploads contents
+echo "Removing deletion job..."
+
+if command -v crontab >/dev/null 2>&1; then
+    # Prepare grep-safe path
+    SAFE_UPLOADS_PATH=$(echo "$UPLOADS_PATH" | sed 's/\//\\\//g')
+
+    # Remove lines containing uploads path from crontab
+    ( crontab -l 2>/dev/null | grep -v "$SAFE_UPLOADS_PATH" ) | crontab -
+    echo "Removed cron job entry."
+fi
+
+# Remove deletion line from /etc/rc.local if present
+if [ -f /etc/rc.local ]; then
+    if grep -q "$UPLOADS_PATH" /etc/rc.local; then
+        sed -i "\|$UPLOADS_PATH|d" /etc/rc.local
+        echo "Removed deletion command from /etc/rc.local."
+    fi
+fi
 
 echo "Uninstall completed successfully."

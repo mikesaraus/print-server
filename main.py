@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+import os
+import sys
+
+# Always run from the script's directory
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, unquote
