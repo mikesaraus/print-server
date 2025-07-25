@@ -105,13 +105,13 @@ echo "Setting up deletion of uploads cronjob..."
 
 if command -v crontab >/dev/null 2>&1; then
     # Prepare the cron line (this example deletes every day at 3 AM)
-    CRON_JOB="0 3 * * * /usr/bin/find $UPLOADS_PATH -mindepth 1 -delete"
-    # CRON_JOB="@reboot /usr/bin/find $UPLOADS_PATH -mindepth 1 -delete"
+    CRON_JOB="0 3 * * * /usr/bin/find $UPLOADS_PATH -mindepth 1 -exec rm -rf {} +"
+    # CRON_JOB="@reboot /usr/bin/find $UPLOADS_PATH -mindepth 1 -exec rm -rf {} +"
     ( crontab -l 2>/dev/null | grep -v -F "$UPLOADS_PATH" ; echo "$CRON_JOB" ) | crontab -
     echo "Cron job added for deletion on reboot."
 elif [ -f /etc/rc.local ]; then
     if ! grep -q "$UPLOADS_PATH" /etc/rc.local; then
-        sed -i "/^exit 0/i /usr/bin/find $UPLOADS_PATH -mindepth 1 -delete" /etc/rc.local
+        sed -i "/^exit 0/i /usr/bin/find $UPLOADS_PATH -mindepth 1 -exec rm -rf {} +" /etc/rc.local
         echo "Deletion command added to /etc/rc.local."
     fi
 else
